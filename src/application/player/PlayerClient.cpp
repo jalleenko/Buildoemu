@@ -220,10 +220,7 @@ void PlayerClient::HandleGenericMessage(ENetPacket* packet)
         }
         else if (command == "enter_game")
         {
-            SendConsoleMessage("`2Entered the game!");
-            SendInventory();
-            SendWorldSelect();
-            SendNews();
+            OnEnterGame();
         }
         else if (command == "input")
         {
@@ -246,6 +243,21 @@ void PlayerClient::HandleGenericMessage(ENetPacket* packet)
             }
         }
     }
+}
+
+bool PlayerClient::HasGrowID() const
+{
+    return !m_loginMetadata.name.empty() && !m_loginMetadata.password.empty();
+}
+
+std::string PlayerClient::GetUsername()
+{
+    if (HasGrowID())
+    {
+        return m_loginMetadata.name;
+    }
+    
+    return m_loginMetadata.requestedName;
 }
 
 void PlayerClient::SendWorldSelect()
@@ -347,4 +359,12 @@ void PlayerClient::Logout()
 {
     // We might want something more robust later
     enet_peer_disconnect_later(m_peer, 0);
+}
+
+void PlayerClient::OnEnterGame()
+{
+    SendConsoleMessage("Welcome back, `w" + GetUsername() + "``. `w/?`` for help.");
+    SendInventory();
+    SendWorldSelect();
+    SendNews();
 }
