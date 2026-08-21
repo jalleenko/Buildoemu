@@ -128,6 +128,8 @@ void PlayerClient::HandleGameMessage(ENetPacket* packet)
             return;
         }
 
+        worldName = ToUpperCaseString(worldName);
+
         m_worldInfo.world = GetApp()->GetWorldManager().GetOrRegisterWorld(worldName);
 
         SendMapPacket(m_worldInfo.world);
@@ -177,7 +179,13 @@ void PlayerClient::HandleGenericMessage(ENetPacket* packet)
 
     if (m_state == State::INITIALIZING)
     {
-        //LogMsg("Client sent a hello: %s", message);
+        if (!ParseLogonMetadata(message))
+        {
+            SendMessagePacket("action|log\nmsg|`4Bad login metadata.``", NetMessageType::GameMessage);
+            SendMessagePacket("action|logon_fail\n", NetMessageType::GameMessage);
+            return;
+        }
+
         m_state = State::AUTHENTICATED;
 
         SendLogonAccept();
@@ -220,10 +228,7 @@ void PlayerClient::HandleGenericMessage(ENetPacket* packet)
         }
         else if (command == "enter_game")
         {
-            SendConsoleMessage("`2Entered the game!");
-            SendInventory();
-            SendWorldSelect();
-            SendNews();
+            OnEnterGame();
         }
         else if (command == "input")
         {
@@ -246,6 +251,34 @@ void PlayerClient::HandleGenericMessage(ENetPacket* packet)
             }
         }
     }
+}
+
+bool PlayerClient::ParseLogonMetadata(const char* metadata)
+{
+    Protocol::GetStringFromText(metadata, "tankIDName|", m_loginMetadata.name, 1, true);
+    Protocol::GetStringFromText(metadata, "tankIDPass|", m_loginMetadata.password, 1, true);
+
+    if (!Protocol::GetStringFromText(metadata, "requestedName|", m_loginMetadata.requestedName, 1, true))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool PlayerClient::HasGrowID() const
+{
+    return !m_loginMetadata.name.empty() && !m_loginMetadata.password.empty();
+}
+
+std::string PlayerClient::GetUsername()
+{
+    if (HasGrowID())
+    {
+        return m_loginMetadata.name;
+    }
+    
+    return m_loginMetadata.requestedName;
 }
 
 void PlayerClient::SendWorldSelect()
@@ -347,4 +380,12 @@ void PlayerClient::Logout()
 {
     // We might want something more robust later
     enet_peer_disconnect_later(m_peer, 0);
+}
+
+void PlayerClient::OnEnterGame()
+{
+    SendConsoleMessage("Welcome back, `w" + GetUsername() + "``. `w/?`` for help.");
+    SendInventory();
+    SendWorldSelect();
+    SendNews();
 }

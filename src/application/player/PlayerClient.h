@@ -15,6 +15,13 @@ public:
         AUTHENTICATED       /*< when the client sends us its logon packet, we set this to acknowledge that the next generic message is something else*/
     };
 
+    struct LoginMetadata
+    {
+        std::string name = "";
+        std::string password = "";
+        std::string requestedName = "";
+    };
+
     void Initialize(ENetPeer* peer);
     void SendMessagePacket(const std::string& message, NetMessageType messageType, uint32 enetPacketFlags = ENET_PACKET_FLAG_RELIABLE);
     void SendGamePacket(GameUpdatePacket* packet, uint8* extendedData = nullptr, uint32 enetPacketFlags = ENET_PACKET_FLAG_RELIABLE);
@@ -33,6 +40,9 @@ public:
     int GetNetID() const { return m_worldInfo.netID; }
     World* GetWorld() { return m_worldInfo.world; }
 
+    bool HasGrowID() const;
+    std::string GetUsername();
+
 private:
     struct WorldInfo
     {
@@ -43,15 +53,19 @@ private:
     void HandleGameMessage(ENetPacket* packet);
     void HandleGenericMessage(ENetPacket* packet);
     void HandleGamePacket(ENetPacket* packet);
+    bool ParseLogonMetadata(const char* metadata);
+
     void SendLogonAccept();
     void SendWorldSelect();
     void SendMapPacket(World* world);
     void SendSpawn();
 
+    void OnEnterGame();
+
     ENetPeer* m_peer = nullptr;
     
     WorldInfo m_worldInfo{};
-
+    LoginMetadata m_loginMetadata{};
     PlayerInventory m_inventory{};
     State m_state = State::INITIALIZING;
 

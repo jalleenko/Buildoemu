@@ -26,7 +26,7 @@ void PlayerCommands::CheatCommand(PC_PARAMS)
     }
 
     pClient->SendInventory();
-    pClient->SendConsoleMessage("Cheat activated, gave you some stuff.");   
+    pClient->SendConsoleMessage(">> Cheat activated, gave you some items.");   
 }
 
 void PlayerCommands::NewsCommand(PC_PARAMS)
