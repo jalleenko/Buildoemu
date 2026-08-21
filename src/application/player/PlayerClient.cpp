@@ -177,7 +177,13 @@ void PlayerClient::HandleGenericMessage(ENetPacket* packet)
 
     if (m_state == State::INITIALIZING)
     {
-        //LogMsg("Client sent a hello: %s", message);
+        if (!ParseLogonMetadata(message))
+        {
+            SendMessagePacket("action|log\nmsg|`4Bad login metadata.``", NetMessageType::GameMessage);
+            SendMessagePacket("action|logon_fail\n", NetMessageType::GameMessage);
+            return;
+        }
+
         m_state = State::AUTHENTICATED;
 
         SendLogonAccept();
@@ -245,9 +251,17 @@ void PlayerClient::HandleGenericMessage(ENetPacket* packet)
     }
 }
 
-void PlayerClient::ParseLogonMetadata(const char* metadata)
+bool PlayerClient::ParseLogonMetadata(const char* metadata)
 {
-    
+    Protocol::GetStringFromText(metadata, "tankIDName|", m_loginMetadata.name, 1, true);
+    Protocol::GetStringFromText(metadata, "tankIDPass|", m_loginMetadata.password, 1, true);
+
+    if (Protocol::GetStringFromText(metadata, "requestedName|", m_loginMetadata.requestedName, 1, true))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 bool PlayerClient::HasGrowID() const
