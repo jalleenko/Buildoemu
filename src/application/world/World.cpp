@@ -15,7 +15,7 @@ uint8* World::SaveToMem(int& offsetInOut)
     MemorySerialize(m_name, buffer, offsetInOut, true);
 
     GetTileMap()->Serialize(buffer, offsetInOut, true);
-    GetObjectMap()->Serialize(buffer, offsetInOut, true);
+    GetObjectMap()->Serialize(buffer, offsetInOut, true, false);
 
     return buffer;
 }

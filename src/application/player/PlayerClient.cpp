@@ -250,6 +250,45 @@ void PlayerClient::HandleGenericMessage(ENetPacket* packet)
                 PlayerCommandManager::Get()->PerformCommand(this, inputMsg);
             }
         }
+        else if (command == "drop")
+        {
+            std::string itemIDStr;
+            if (!Protocol::GetStringFromText(message, "|itemID|", itemIDStr, 1, false))
+                return;
+
+            float dirOffset = -0.75f;
+            if (!m_bIsFlipped)
+                dirOffset = 0.75f;
+
+            CL_Vec2f pos = m_pos;
+            pos.x += dirOffset * 32.0f;
+            // pos.y += offset.y;
+            
+            WorldObjectMap* pObjectMap = m_worldInfo.world->GetObjectMap();
+
+            WorldObject& obj = pObjectMap->m_objectsList.emplace_back(WorldObject());
+            obj.m_pos.x = pos.x;
+            obj.m_pos.y = pos.y;
+            obj.m_itemID = StringToInt(itemIDStr);
+            obj.m_count = (uint8)10;
+            obj.m_flags = WORLDOBJECTFLAG_NONE;
+            obj.m_objectID = ++pObjectMap->m_count;
+
+            GameUpdatePacket packet;
+            memset(&packet, 0, sizeof(GameUpdatePacket));
+            packet.SetType(GamePacketType::ItemChangeObject);
+            packet.dataField4 = OBJECT_CHANGE_TYPE_SPAWN;
+            packet.dataField0 = obj.m_flags;
+            packet.dataField6 = -1;
+            packet.dataField8 = (float)obj.m_count;
+            packet.dataField9 = obj.m_itemID;
+            packet.dataField10 = pos;
+            SendGamePacket(&packet);
+        }
+        else
+        {
+            LogError("unhandled generic message: %s", command.c_str());
+        }
     }
 }
 
@@ -321,9 +360,26 @@ void PlayerClient::SendNews()
 
 void PlayerClient::HandleGamePacket(ENetPacket* packet)
 {
-    if (packet == nullptr)
-    {
+    if (!packet)
         return;
+
+    GameUpdatePacket* pUpdate = (GameUpdatePacket*)Protocol::GetStructPointerFromTankPacket(packet);
+    if (!pUpdate)
+    {
+        LogMsg("Bad packet, avoiding crash");
+        return;
+    }
+
+    switch ((GamePacketType)pUpdate->type)
+    {
+        case GamePacketType::State:
+        {
+            m_pos = pUpdate->dataField10;
+            m_bIsFlipped = pUpdate->HasFlag(GamePacketFlag::FacingLeft);
+
+            LogMsg("state: posX=%.2f, posY=%.2f, isFlipped=%d", m_pos.x, m_pos.y, m_bIsFlipped);
+            break;
+        }
     }
 }
 
