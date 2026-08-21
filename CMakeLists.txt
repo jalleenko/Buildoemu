@@ -12,13 +12,6 @@ add_executable(buildoemu
     ${APP_DIR}/ServerMain.cpp
     ${APP_DIR}/ServerApplication.cpp
     ${APP_DIR}/DedicatedServer.cpp
-    
-    ${APP_DIR}/player/PlayerClient.cpp
-    ${APP_DIR}/player/PlayerManager.cpp
-    ${APP_DIR}/player/PlayerInventory.cpp
-    ${APP_DIR}/player/command/PlayerCommands.cpp
-    ${APP_DIR}/player/command/PlayerCommandManager.cpp
-
     ${APP_DIR}/gt/Protocol.cpp
 
     ${APP_DIR}/common/Proton.cpp
@@ -27,6 +20,12 @@ add_executable(buildoemu
     ${APP_DIR}/items/ItemInfo.cpp
     ${APP_DIR}/items/ItemInfoUtils.cpp
     ${APP_DIR}/items/ItemManager.cpp
+    
+    ${APP_DIR}/player/PlayerClient.cpp
+    ${APP_DIR}/player/PlayerManager.cpp
+    ${APP_DIR}/player/PlayerInventory.cpp
+    ${APP_DIR}/player/command/PlayerCommands.cpp
+    ${APP_DIR}/player/command/PlayerCommandManager.cpp
 
     ${APP_DIR}/world/World.cpp
     ${APP_DIR}/world/WorldTileMap.cpp
@@ -34,7 +33,7 @@ add_executable(buildoemu
     ${APP_DIR}/world/Tile.cpp
     ${APP_DIR}/world/TileExtra.cpp
     ${APP_DIR}/world/WorldManager.cpp
-    #${APP_DIR}/world/WorldObject.cpp
+    ${APP_DIR}/world/WorldObject.cpp
 
     ${PROTON_FILES}
 )

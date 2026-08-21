@@ -14,6 +14,7 @@ public:
 
     bool Load();
     void InitializePlayerItemData();
+    int GetItemCount() { return (int)m_items.size(); }
     PlayerItemData& GetPlayerItemData() { return m_itemData; } 
     ItemInfo* GetItemByIDSafe(int itemID);
 

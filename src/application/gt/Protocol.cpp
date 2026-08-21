@@ -109,3 +109,27 @@ bool Protocol::GetStringFromText(const char* pText, const char* key, std::string
 
     return false;
 }
+
+uint8* Protocol::GetStructPointerFromTankPacket(ENetPacket* packet)
+{
+    if (packet->dataLength < 0x3C) // 60 bytes
+        return NULL;
+
+	uint32 dataLength = packet->dataLength;
+    uint8* data = packet->data;
+
+    if ((data[16] & uint32(GamePacketFlag::Extended)) != 0)
+    {
+        if (dataLength < *((uint32*)data + 14) + 60 )
+        {
+            LogMsg("Packet too small for extended packet to be valid");
+            LogMsg("Sizeof float is %d.  TankUpdatePacket size: %d", 4, 56);
+            return NULL;
+        }
+    }
+    else
+    {
+        *((uint32*)data + 14) = 0; // dataLength
+    }
+	return (uint8*)(data + 4); // skip header (eNetMessageType)
+}

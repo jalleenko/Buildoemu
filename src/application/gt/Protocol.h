@@ -18,12 +18,14 @@ enum class GamePacketType : uint8
     FunctionCall,
     SendMap = 4,
     SendInventoryState = 9,
+    ItemChangeObject = 14,
     SendItemDatabaseData = 16
 };
 
 enum class GamePacketFlag : uint32
 {
-    Extended = (1 << 3)
+    Extended = (1 << 3),
+    FacingLeft = (1 << 4),
 };
 
 class GameUpdatePacket
@@ -70,4 +72,5 @@ namespace Protocol
     NetMessageType GetMessageType(ENetPacket* packet);
     char* GetMessage(ENetPacket* packet);
     bool GetStringFromText(const char* pText, const char* key, std::string& sOut, int count, bool bPicky);
+    uint8* GetStructPointerFromTankPacket(ENetPacket* packet);
 }

@@ -56,4 +56,7 @@ private:
     State m_state = State::INITIALIZING;
 
     uint32 m_skinColor = 2022356223;
+    // uint32 m_settingFlags = 0;
+    bool m_bIsFlipped = false;
+    CL_Vec2f m_pos = CL_Vec2f(0.0f, 0.0f);
 };

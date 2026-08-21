@@ -1,16 +1,23 @@
 #pragma once
 #include "world/WorldObject.h"
-#include <vector>
-
+#include <list>
 #include "PlatformSetup.h"
 
 class WorldObjectMap
 {
 public:
-    int GetMemEstimate();
-    void Serialize(uint8* buffer, int& offsetInOut, bool write);
+    uint32 m_count;
+    uint32 m_offset;
+    std::list<WorldObject> m_objectsList;
 
-private:
-    uint32 m_uniqueNumberGen = 0;
-    std::vector<WorldObject> m_objects{};
+public:
+    WorldObjectMap();
+    virtual ~WorldObjectMap();
+
+    void Clear();
+    void ReorderObjects();
+
+    int GetMemEstimate();
+    // @Note: bIgnoreExtra is set to false when loading from disk.
+    void Serialize(uint8* pMem, int& offsetInOut, bool bWriteToMem, bool bIgnoreExtra);
 };
