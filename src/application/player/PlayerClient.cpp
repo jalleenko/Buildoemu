@@ -256,7 +256,7 @@ bool PlayerClient::ParseLogonMetadata(const char* metadata)
     Protocol::GetStringFromText(metadata, "tankIDName|", m_loginMetadata.name, 1, true);
     Protocol::GetStringFromText(metadata, "tankIDPass|", m_loginMetadata.password, 1, true);
 
-    if (Protocol::GetStringFromText(metadata, "requestedName|", m_loginMetadata.requestedName, 1, true))
+    if (!Protocol::GetStringFromText(metadata, "requestedName|", m_loginMetadata.requestedName, 1, true))
     {
         return false;
     }
