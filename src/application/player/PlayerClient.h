@@ -53,6 +53,8 @@ private:
     void HandleGameMessage(ENetPacket* packet);
     void HandleGenericMessage(ENetPacket* packet);
     void HandleGamePacket(ENetPacket* packet);
+    void ParseLogonMetadata(const char* metadata);
+
     void SendLogonAccept();
     void SendWorldSelect();
     void SendMapPacket(World* world);

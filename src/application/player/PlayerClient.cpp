@@ -245,6 +245,11 @@ void PlayerClient::HandleGenericMessage(ENetPacket* packet)
     }
 }
 
+void PlayerClient::ParseLogonMetadata(const char* metadata)
+{
+    
+}
+
 bool PlayerClient::HasGrowID() const
 {
     return !m_loginMetadata.name.empty() && !m_loginMetadata.password.empty();
