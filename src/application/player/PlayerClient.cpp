@@ -128,6 +128,8 @@ void PlayerClient::HandleGameMessage(ENetPacket* packet)
             return;
         }
 
+        worldName = ToUpperCaseString(worldName);
+
         m_worldInfo.world = GetApp()->GetWorldManager().GetOrRegisterWorld(worldName);
 
         SendMapPacket(m_worldInfo.world);
