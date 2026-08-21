@@ -145,7 +145,7 @@ void PlayerClient::SendSpawn()
 {
     VariantList v{};
     v.Get(0).Set("OnSpawn");
-    v.Get(1).Set("spawn|avatar\nnetID|1\nuserID|1\ncolrect|0|0|20|30|\nposXY|500|200|\nname|blud\ncountry|us\ntype|local");
+    v.Get(1).Set("spawn|avatar\nnetID|1\nuserID|1\ncolrect|0|0|20|30|\nposXY|500|928|\nname|blud\ncountry|us\ntype|local");
     SendFunctionCall(v, -1);
 }
 

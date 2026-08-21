@@ -32,6 +32,7 @@ add_executable(buildoemu
     ${APP_DIR}/world/WorldTileMap.cpp
     ${APP_DIR}/world/WorldObjectMap.cpp
     ${APP_DIR}/world/Tile.cpp
+    ${APP_DIR}/world/TileExtra.cpp
     ${APP_DIR}/world/WorldManager.cpp
     #${APP_DIR}/world/WorldObject.cpp
 
